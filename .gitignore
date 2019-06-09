@@ -1,2 +1,5 @@
 .idea/
 target/
+.mvn/wrapper/maven-wrapper.jar
+maven-version-rules.xml
+pom.xml.versionsBackup
