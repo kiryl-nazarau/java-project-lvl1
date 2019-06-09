@@ -15,7 +15,7 @@
         <!--Project settings-->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <maven.compiler.release>12</maven.compiler.release>
+        <maven.compiler.release>11</maven.compiler.release>
 
         <!--Libs-->
         <log4j-slf4j-impl.version>2.11.1</log4j-slf4j-impl.version>
