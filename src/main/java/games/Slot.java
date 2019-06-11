@@ -12,7 +12,7 @@ public class Slot {
   private static int[] line = new int[AMOUNT_OF_REELS];
 
 
-  public static void main(final String[] args) {
+  public static void main() {
 
     while (amount > 0) {
 
