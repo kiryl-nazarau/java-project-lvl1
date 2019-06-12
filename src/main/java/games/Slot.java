@@ -1,6 +1,6 @@
 package games;
 
-public class Slot {
+class Slot {
   private static final int REEL_SIZE = 7;
   private static final int AMOUNT_OF_REELS = 3;
   private static int reelValue;
@@ -12,7 +12,7 @@ public class Slot {
   private static int[] line = new int[AMOUNT_OF_REELS];
 
 
-  public static void main() {
+  static void main() {
 
     while (amount > 0) {
 

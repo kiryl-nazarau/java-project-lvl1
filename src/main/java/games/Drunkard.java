@@ -1,19 +1,14 @@
 package games;
 
-import org.apache.commons.math3.util.MathArrays;
-
 import java.util.Arrays;
 
 
-public class Drunkard {
+class Drunkard {
 
   private static final int NUMBER_OF_PLAYERS = 2;
   private static final int PLAYER_1_INDEX = 0;
   private static final int PLAYER_2_INDEX = 1;
-  private static final int PARS_TOTAL_COUNT = Par.values().length;
-  private static final int CARDS_TOTAL_COUNT = PARS_TOTAL_COUNT * Suit.values().length;
-  private static int[] cardsArray = new int[CARDS_TOTAL_COUNT];
-  private static int[][] playersCards = new int[NUMBER_OF_PLAYERS][CARDS_TOTAL_COUNT + 1];
+  private static int[][] playersCards = new int[NUMBER_OF_PLAYERS][CardUtils.CARDS_TOTAL_COUNT + 1];
   private static int[] playerCardTails = new int[NUMBER_OF_PLAYERS];
   private static int[] playerCardHeads = new int[NUMBER_OF_PLAYERS];
   private static int[] cardsForIteration = new int[NUMBER_OF_PLAYERS];
@@ -21,7 +16,7 @@ public class Drunkard {
 
 
 
-  public static void main() {
+  static void main() {
 
     dealCardsToPlayers();
 
@@ -32,7 +27,7 @@ public class Drunkard {
       for (int i = 0; i < NUMBER_OF_PLAYERS; i++) {
 
         cardsForIteration[i] = putCard(i);
-        System.out.println("Player " + (i + 1) + " card is " + toString(cardsForIteration[i]));
+        System.out.println("Player " + (i + 1) + " card is " + CardUtils.toString(cardsForIteration[i]));
 
       }
 
@@ -52,27 +47,15 @@ public class Drunkard {
       System.out.print("Player 1 has " + countPlayerCards(PLAYER_1_INDEX) + " cards. ");
       System.out.println("Player 2 has " + countPlayerCards(PLAYER_2_INDEX) + " cards.");
 
-      if (countPlayerCards(PLAYER_1_INDEX) == CARDS_TOTAL_COUNT) {
+      if (countPlayerCards(PLAYER_1_INDEX) == CardUtils.CARDS_TOTAL_COUNT) {
         System.out.println("Player 1 wins the game. The number of iterations is " + iteration);
-      } else if (countPlayerCards(PLAYER_2_INDEX) == CARDS_TOTAL_COUNT) {
+      } else if (countPlayerCards(PLAYER_2_INDEX) == CardUtils.CARDS_TOTAL_COUNT) {
         System.out.println("Player 2 wins the game. The number of iterations is " + iteration);
       }
 
       System.out.println("--------------------------------------------");
 
     }
-  }
-
-  private static Suit getSuit(int cardNumber) {
-    return Suit.values()[cardNumber / PARS_TOTAL_COUNT];
-  }
-
-  private static Par getPar(int cardNumber) {
-    return Par.values()[cardNumber % PARS_TOTAL_COUNT];
-  }
-
-  private static String toString(int cardNumber) {
-    return getPar(cardNumber) + " " + getSuit(cardNumber);
   }
 
   private static boolean playerCardsIsEmpty(int playerIndex) {
@@ -83,29 +66,25 @@ public class Drunkard {
   }
 
   private static int incrementIndex(int i) {
-    return (i + 1) % CARDS_TOTAL_COUNT;
+    return (i + 1) % CardUtils.CARDS_TOTAL_COUNT;
   }
 
 
-  // Init, shuffle and deal cards between the players, the blank places in playersCards array is set to -1
+  // Deal cards between the players, the blank places in playersCards array is set to -1
   // playerCardTails and playerCardHeads are also set up while dealing.
   private static void dealCardsToPlayers() {
 
-    for (int i = 0; i < CARDS_TOTAL_COUNT; i++) {
-      cardsArray[i] = i;
-    }
+    int[] cardsArray = CardUtils.getShuffledCards();
 
-    MathArrays.shuffle(cardsArray);
-
-    playersCards[PLAYER_1_INDEX] = Arrays.copyOfRange(cardsArray, 0, CARDS_TOTAL_COUNT / NUMBER_OF_PLAYERS);
-    playersCards[PLAYER_2_INDEX] = Arrays.copyOfRange(cardsArray, CARDS_TOTAL_COUNT / NUMBER_OF_PLAYERS, CARDS_TOTAL_COUNT);
+    playersCards[PLAYER_1_INDEX] = Arrays.copyOfRange(cardsArray, 0, CardUtils.CARDS_TOTAL_COUNT / NUMBER_OF_PLAYERS);
+    playersCards[PLAYER_2_INDEX] = Arrays.copyOfRange(cardsArray, CardUtils.CARDS_TOTAL_COUNT / NUMBER_OF_PLAYERS, CardUtils.CARDS_TOTAL_COUNT);
 
     for (int i = 0; i < NUMBER_OF_PLAYERS; i++) {
-      playersCards[i] = Arrays.copyOf(playersCards[i], CARDS_TOTAL_COUNT + 1);
+      playersCards[i] = Arrays.copyOf(playersCards[i], CardUtils.CARDS_TOTAL_COUNT + 1);
       playerCardTails[i] = 0;
-      playerCardHeads[i] = CARDS_TOTAL_COUNT / NUMBER_OF_PLAYERS;
+      playerCardHeads[i] = CardUtils.CARDS_TOTAL_COUNT / NUMBER_OF_PLAYERS;
 
-      for (int j = CARDS_TOTAL_COUNT / NUMBER_OF_PLAYERS; j < playersCards[i].length; j++) {
+      for (int j = CardUtils.CARDS_TOTAL_COUNT / NUMBER_OF_PLAYERS; j < playersCards[i].length; j++) {
         playersCards[i][j] = -1;
 
       }
@@ -118,12 +97,12 @@ public class Drunkard {
     int[] cardsEnumIndex = new int[NUMBER_OF_PLAYERS];
 
     for (int i = 0; i < cardsForIteration.length; i++) {
-      cardsEnumIndex[i] = Par.valueOf(getPar(cardsForIteration[i]).toString()).ordinal();
+      cardsEnumIndex[i] = CardUtils.Par.valueOf(CardUtils.getPar(cardsForIteration[i]).toString()).ordinal();
     }
 
-    if (getPar(cardsForIteration[PLAYER_1_INDEX]) == Par.SIX && getPar(cardsForIteration[PLAYER_2_INDEX]) == Par.ACE) {
+    if (CardUtils.getPar(cardsForIteration[PLAYER_1_INDEX]) == CardUtils.Par.SIX && CardUtils.getPar(cardsForIteration[PLAYER_2_INDEX]) == CardUtils.Par.ACE) {
       return PLAYER_1_INDEX;
-    } else if (getPar(cardsForIteration[PLAYER_1_INDEX]) == Par.ACE && getPar(cardsForIteration[PLAYER_2_INDEX]) == Par.SIX) {
+    } else if (CardUtils.getPar(cardsForIteration[PLAYER_1_INDEX]) == CardUtils.Par.ACE && CardUtils.getPar(cardsForIteration[PLAYER_2_INDEX]) == CardUtils.Par.SIX) {
       return PLAYER_2_INDEX;
     }
 
@@ -166,7 +145,7 @@ public class Drunkard {
   //Counting the player's cards. As blank spaces in the array is marked as -1, it count the places which are != -1
   private static int countPlayerCards(int playerIndex) {
     int cardAmount = 0;
-    for (int i = 0; i < CARDS_TOTAL_COUNT; i++) {
+    for (int i = 0; i < CardUtils.CARDS_TOTAL_COUNT; i++) {
       if (playersCards[playerIndex][i] >= 0) {
         cardAmount++;
       }
@@ -174,23 +153,6 @@ public class Drunkard {
     return cardAmount;
   }
 
-  enum Suit {
-    SPADES,
-    HEARTS,
-    CLUBS,
-    DIAMONDS
-  }
 
-  enum Par {
-    SIX,
-    SEVEN,
-    EIGHT,
-    NINE,
-    TEN,
-    JACK,
-    QUEEN,
-    KING,
-    ACE
-  }
 
 }
