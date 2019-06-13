@@ -1,15 +1,16 @@
 package games;
 
+import org.slf4j.Logger;
 import java.io.IOException;
 
 class BlackJack {
 
+  private static final Logger log = org.slf4j.LoggerFactory.getLogger(BlackJack.class);
   private static final int NUMBER_OF_PLAYERS = 2;
   private static final int PLAYER_1_INDEX = 0;
   private static final int CRU_INDEX = 1;
   private static final int START_AMOUNT = 100;
   private static final int BET = 10;
-
   private static final int MAX_VALUE = 21;
   private static final int MAX_CARDS_COUNT = 8;
   private static int[] cards;
@@ -18,14 +19,10 @@ class BlackJack {
   private static int[] playersCursors = new int[NUMBER_OF_PLAYERS];
   private static int[] playersMoney = {START_AMOUNT, START_AMOUNT};
 
-
   static void main() throws IOException {
-
     while (playersMoney[PLAYER_1_INDEX] != 0 && playersMoney[CRU_INDEX] != 0) {
-
       initRound();
       placeBets();
-
       addCard2Player(PLAYER_1_INDEX);
       addCard2Player(PLAYER_1_INDEX);
 
@@ -33,8 +30,8 @@ class BlackJack {
         boolean playerChoice;
         playerChoice = Choice.confirm("Do you want to take one more card?\n");
         if (playerChoice) {
-            addCard2Player(PLAYER_1_INDEX);
-          } else break;
+          addCard2Player(PLAYER_1_INDEX);
+        } else break;
       }
 
       addCard2Player(CRU_INDEX);
@@ -46,27 +43,22 @@ class BlackJack {
 
       int playerPoints = getFinalSum(PLAYER_1_INDEX);
       int cruPoints = getFinalSum(CRU_INDEX);
-
-      System.out.println("Your points - " + playerPoints + ", CRU's points - " + cruPoints);
-
+      log.info("Your points - {}, CRU's points - {}", playerPoints, cruPoints);
       determineWinner(playerPoints, cruPoints);
-
-
     }
 
     if (playersMoney[PLAYER_1_INDEX] > 0)
-      System.out.println("You win! Congratulations!");
+      log.info("You win! Congratulations!");
     else
-      System.out.println("You lose the game. Sorry ...");
-
+      log.info("You lose the game. Sorry ...");
   }
 
   private static void addCard2Player(int playerIndex) {
     int currentCard = cards[cursor];
     playersCards[playerIndex][playersCursors[playerIndex]] = currentCard;
     if (playerIndex == PLAYER_1_INDEX) {
-      System.out.println("Your card is " + CardUtils.toString(playersCards[playerIndex][playersCursors[playerIndex]]));
-    } else System.out.println("CRU card is " + CardUtils.toString(playersCards[playerIndex][playersCursors[playerIndex]]));
+      log.info("Your card is {}", CardUtils.toString(playersCards[playerIndex][playersCursors[playerIndex]]));
+    } else log.info("CRU card is {}", CardUtils.toString(playersCards[playerIndex][playersCursors[playerIndex]]));
     cursor++;
     playersCursors[playerIndex]++;
   }
@@ -84,7 +76,7 @@ class BlackJack {
     if (finalSum <= MAX_VALUE) {
       return finalSum;
     }
-      return 0;
+    return 0;
   }
 
   //Method to take the bet amount from the players account each round
@@ -108,21 +100,20 @@ class BlackJack {
 
   //Winner determiner, add the win to the winner ammount and print the result. In draw case returns bets to players
   private static void determineWinner(int playerPoints, int cruPoints) {
-    if(playerPoints > cruPoints) {
+    if (playerPoints > cruPoints) {
       addRoundWinToPlayer(PLAYER_1_INDEX);
-      System.out.println("You win this round! You get " + BET + "$");
+      log.info("You win this round! You get {}$\n", BET);
     } else if (playerPoints < cruPoints) {
       addRoundWinToPlayer(CRU_INDEX);
-      System.out.println("You lose this round! You lose " + BET + "$");
+      log.info("You lose this round! You lose {}$\n", BET);
     } else {
       returnBets();
-      System.out.println("No one wins. It's a draw!");
+      log.info("No one wins. It's a draw!\n");
     }
   }
 
   private static void initRound() {
-    System.out.println("-------------------------------------------------------------------");
-    System.out.println("You have " + playersMoney[PLAYER_1_INDEX] + "$, and CRU has " + playersMoney[CRU_INDEX] + "$. We are starting new round!");
+    log.info("You have {}$, and CRU has {}$. We are starting new round!", playersMoney[PLAYER_1_INDEX], playersMoney[CRU_INDEX]);
     cards = CardUtils.getShuffledCards();
     playersCards = new int[2][MAX_CARDS_COUNT];
     playersCursors = new int[]{0, 0};

@@ -1,6 +1,10 @@
 package games;
 
+import org.slf4j.Logger;
+
 class Slot {
+
+  private static final Logger log = org.slf4j.LoggerFactory.getLogger(Slot.class);
   private static final int REEL_SIZE = 7;
   private static final int AMOUNT_OF_REELS = 3;
   private static int reelValue;
@@ -11,40 +15,35 @@ class Slot {
   private static final int WIN = 1000;
   private static int[] line = new int[AMOUNT_OF_REELS];
 
-
   static void main() {
-
     while (amount > 0) {
 
-      System.out.println("Your amount is " + amount + "$, Your bet is " + BET + "$");
-      System.out.println("Spinning the reels! The round has the following results:");
+      log.info("Your amount is {}$, Your bet is {}$", amount, BET);
+      log.info("Spinning the reels! The round has the following results:");
 
       for (int i = 0; i < AMOUNT_OF_REELS; i++) {
         reelValue = (reelValue + ((int) Math.round(Math.random() * MAX_EFFORT))) % REEL_SIZE;
         line[i] = reelValue;
       }
 
-      System.out.print("First reel - " + line[0] + ". ");
-      System.out.print("Second reel - " + line[1] + ". ");
-      System.out.print("Third reel - " + line[2] + ".\n");
+      log.info("First reel - {}. ", line[0]);
+      log.info("Second reel - {}. ", line[1]);
+      log.info("Third reel - {}.", line[2]);
 
       amount -= BET;
 
       if (line[0] == line[1] && line[0] == line[2]) {
         amount = amount + WIN;
-        System.out.println("CONGRATULATION!!! YOU WIN " + WIN + "$");
+        log.info("CONGRATULATION!!! YOU WIN {}$", WIN);
       } else {
-        System.out.println("Your line did not win. You lose " + BET + "$");
+        log.info("Your line did not win. You lose {}$", BET);
       }
 
-      System.out.println("Your current amount is " + amount + "$");
+      log.info("Your current amount is {}$\n", amount);
 
       if (amount == 0) {
-        System.out.println("Game Over :(");
+        log.info("Game Over :(");
       }
-
-      System.out.println("________________________________________________________");
-
     }
   }
 }
