@@ -33,7 +33,7 @@ class Slot {
       amount -= BET;
 
       if (line[0] == line[1] && line[0] == line[2]) {
-        amount = amount + WIN;
+        amount += WIN;
         log.info("CONGRATULATION!!! YOU WIN {}$", WIN);
       } else {
         log.info("Your line did not win. You lose {}$", BET);
