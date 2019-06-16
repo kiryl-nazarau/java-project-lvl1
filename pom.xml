@@ -16,17 +16,11 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.compiler.release>11</maven.compiler.release>
+        <requireMaven.version>3.3.9</requireMaven.version>
 
         <!--Libs-->
-        <log4j-slf4j-impl.version>2.11.1</log4j-slf4j-impl.version>
-        <vavr.version>0.9.2</vavr.version>
-        <lombok.version>1.18.2</lombok.version>
-        <checker.version>2.5.5</checker.version>
-        <annotations.version>16.0.3</annotations.version>
-        <junit-jupiter.version>5.3.1</junit-jupiter.version>
-        <junit-jupiter-params.version>${junit-jupiter.version}</junit-jupiter-params.version>
-        <junit-jupiter-engine.version>${junit-jupiter.version}</junit-jupiter-engine.version>
-        <assertj-core.version>3.11.1</assertj-core.version>
+        <log4j-slf4j-impl.version>2.11.2</log4j-slf4j-impl.version>
+        <commons-math3.version>3.6.1</commons-math3.version>
 
         <!--Plugins-->
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
@@ -35,6 +29,10 @@
         <maven-enforcer-plugin.version>3.0.0-M2</maven-enforcer-plugin.version>
         <maven-surefire-plugin.version>3.0.0-M3</maven-surefire-plugin.version>
         <sonar-maven-plugin.version>2.7.1</sonar-maven-plugin.version>
+        <spotbugs-maven-plugin.version>3.1.12</spotbugs-maven-plugin.version>
+        <maven-pmd-plugin.version>3.12.0</maven-pmd-plugin.version>
+        <maven-jxr-plugin.version>3.0.0</maven-jxr-plugin.version>
+
 
     </properties>
 
@@ -44,12 +42,12 @@
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j-impl</artifactId>
-            <version>2.11.2</version>
+            <version>${log4j-slf4j-impl.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-math3</artifactId>
-            <version>3.6</version>
+            <version>${commons-math3.version}</version>
         </dependency>
 
     </dependencies>
@@ -60,26 +58,17 @@
 
             <!-- COMPILER (Java10+ and lombok compatible) -->
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <version>${maven-compiler-plugin.version}</version>
                 <configuration>
                     <compilerArgs>
                         <arg>-parameters</arg>
                     </compilerArgs>
                 </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.ow2.asm</groupId>
-                        <artifactId>asm</artifactId>
-                        <version>7.1</version>
-                    </dependency>
-                </dependencies>
             </plugin>
 
             <!-- JAR with dependencies -->
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>${maven-assembly-plugin.version}</version>
                 <configuration>
@@ -126,7 +115,6 @@
 
             <!-- Minimum maven version -->
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
                 <version>${maven-enforcer-plugin.version}</version>
                 <executions>
@@ -138,7 +126,7 @@
                         <configuration>
                             <rules>
                                 <requireMavenVersion>
-                                    <version>3.5.4</version>
+                                    <version>${requireMaven.version}</version>
                                 </requireMavenVersion>
                             </rules>
                         </configuration>
@@ -148,7 +136,6 @@
 
             <!-- SUREFIRE (compatible with JUnit 5+, Java 9+, Lombok) -->
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven-surefire-plugin.version}</version>
                 <configuration>
@@ -176,13 +163,12 @@
             <plugin>
                 <groupId>com.github.spotbugs</groupId>
                 <artifactId>spotbugs-maven-plugin</artifactId>
-                <version>3.1.12</version>
+                <version>${spotbugs-maven-plugin.version}</version>
             </plugin>
 
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-pmd-plugin</artifactId>
-                <version>3.12.0</version>
+                <version>${maven-pmd-plugin.version}</version>
                 <configuration>
                     <failOnViolation>true</failOnViolation>
                     <printFailingErrors>true</printFailingErrors>
@@ -199,5 +185,15 @@
         </plugins>
 
     </build>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jxr-plugin</artifactId>
+                <version>${maven-jxr-plugin.version}</version>
+            </plugin>
+        </plugins>
+    </reporting>
 
 </project>
