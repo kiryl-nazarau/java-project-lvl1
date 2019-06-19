@@ -15,7 +15,7 @@ public class Choice {
       case '1': Slot.main(); break;
       case '2': Drunkard.main(); break;
       case '3': BlackJack.main(); break;
-      default: System.out.println("There is no game with this number!");
+      default: log.info("There is no game with this number!");
     }
   }
 
