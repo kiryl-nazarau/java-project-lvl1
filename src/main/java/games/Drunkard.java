@@ -16,7 +16,7 @@ class Drunkard {
   private static int iteration;
 
   static void main() {
-    dealCardsToPlayers();
+    dealCardsToPlayers(CardUtils.getShuffledCards());
 
     while (!playerCardsIsEmpty(PLAYER_1_INDEX) || !playerCardsIsEmpty(PLAYER_2_INDEX)) {
       log.info("Iteration N {}:", ++iteration);
@@ -25,7 +25,7 @@ class Drunkard {
         putCard(i);
       }
 
-      determineWinner();
+      determineRoundWinner();
       log.info("Player 1 has {} cards. Player 2 has {} cards.\n", countPlayerCards(PLAYER_1_INDEX), countPlayerCards(PLAYER_2_INDEX));
 
       if (countPlayerCards(PLAYER_1_INDEX) == CardUtils.CARDS_TOTAL_COUNT) {
@@ -46,26 +46,46 @@ class Drunkard {
     return (i + 1) % CardUtils.CARDS_TOTAL_COUNT;
   }
 
-  // Deal cards between the players, the blank places in playersCards array is set to -1
-  // playerCardTails and playerCardHeads are also set up while dealing.
-  private static void dealCardsToPlayers() {
-    int[] cardsArray = CardUtils.getShuffledCards();
-    playersCards[PLAYER_1_INDEX] = Arrays.copyOfRange(cardsArray, 0, CardUtils.CARDS_TOTAL_COUNT / NUMBER_OF_PLAYERS);
-    playersCards[PLAYER_2_INDEX] = Arrays.copyOfRange(cardsArray, CardUtils.CARDS_TOTAL_COUNT / NUMBER_OF_PLAYERS, CardUtils.CARDS_TOTAL_COUNT);
+  private static void dealCardsToPlayers(int[] shuffledCards) {
 
     for (int i = 0; i < NUMBER_OF_PLAYERS; i++) {
-      playersCards[i] = Arrays.copyOf(playersCards[i], CardUtils.CARDS_TOTAL_COUNT + 1);
-      playerCardTails[i] = 0;
-      playerCardHeads[i] = CardUtils.CARDS_TOTAL_COUNT / NUMBER_OF_PLAYERS;
+        Arrays.fill(playersCards[i], -1);
+      }
 
-      for (int j = CardUtils.CARDS_TOTAL_COUNT / NUMBER_OF_PLAYERS; j < playersCards[i].length; j++) {
-        playersCards[i][j] = -1;
+    for (int i = 0; i < shuffledCards.length; i++) {
+      if (i < shuffledCards.length / NUMBER_OF_PLAYERS) {
+        addCardToPlayer(shuffledCards[i], PLAYER_1_INDEX);
+      } else {
+        addCardToPlayer(shuffledCards[i], PLAYER_2_INDEX);
       }
     }
   }
 
-  //Winner determiner, returns player id or -1 in draw case
-  private static void determineWinner() {
+  private static void putCard(int playerIndex) {
+    cardsForIteration[playerIndex] = playersCards[playerIndex][playerCardTails[playerIndex]];
+    playersCards[playerIndex][playerCardTails[playerIndex]] = -1;
+    playerCardTails[playerIndex] = incrementIndex(playerCardTails[playerIndex]);
+    log.info("Player {} card is {}", playerIndex + 1, CardUtils.toString(cardsForIteration[playerIndex]));
+  }
+
+  private static void addCardToPlayer(int card, int playerIndex) {
+    playersCards[playerIndex][playerCardHeads[playerIndex]] = card;
+    playerCardHeads[playerIndex] = incrementIndex(playerCardHeads[playerIndex]);
+  }
+
+  private static void collectCards(int playerIndex) {
+    for (int card : cardsForIteration) {
+      addCardToPlayer(card, playerIndex);
+    }
+  }
+
+  private static void returnCardsToPlayers() {
+    for (int i = 0; i < NUMBER_OF_PLAYERS; i++) {
+      addCardToPlayer(cardsForIteration[i], i);
+    }
+  }
+
+  private static void determineRoundWinner() {
     int[] cardsEnumIndex = new int[NUMBER_OF_PLAYERS];
 
     for (int i = 0; i < cardsForIteration.length; i++) {
@@ -76,46 +96,20 @@ class Drunkard {
       collectCards(PLAYER_1_INDEX);
       log.info("Player 1 wins the round!");
     } else if (cardsEnumIndex[PLAYER_1_INDEX] == 8 && cardsEnumIndex[PLAYER_2_INDEX] == 0) {
-        collectCards(PLAYER_2_INDEX);
-        log.info("Player 2 wins the round!");
-      } else if (cardsEnumIndex[PLAYER_1_INDEX] > cardsEnumIndex[PLAYER_2_INDEX]) {
-          collectCards(PLAYER_1_INDEX);
-          log.info("Player 1 wins the round!");
-        } else if (cardsEnumIndex[PLAYER_1_INDEX] < cardsEnumIndex[PLAYER_2_INDEX]) {
-          collectCards(PLAYER_2_INDEX);
-          log.info("Player 2 wins the round!");
-          } else {
-              returnCardsToPlayers();
-              log.info("No one wins. It's a draw!");
-            }
-  }
-
-  //Method implements the action of taking first/next cards from the top of player's card stack.
-  //When the card was put, it's array place becomes -1 and the playerCardTail is increased
-  private static void putCard(int playerIndex) {
-    cardsForIteration[playerIndex] = playersCards[playerIndex][playerCardTails[playerIndex]];
-    playersCards[playerIndex][playerCardTails[playerIndex]] = -1;
-    playerCardTails[playerIndex] = incrementIndex(playerCardTails[playerIndex]);
-    log.info("Player {} card is {}", playerIndex + 1, CardUtils.toString(cardsForIteration[playerIndex]));
-  }
-
-  //Method for collecting the cards which were used in the round. While adding the cards playerCardHead is also incremented
-  private static void collectCards(int playerIndex) {
-    for (int value : cardsForIteration) {
-      playersCards[playerIndex][playerCardHeads[playerIndex]] = value;
-      playerCardHeads[playerIndex] = incrementIndex(playerCardHeads[playerIndex]);
+      collectCards(PLAYER_2_INDEX);
+      log.info("Player 2 wins the round!");
+    } else if (cardsEnumIndex[PLAYER_1_INDEX] > cardsEnumIndex[PLAYER_2_INDEX]) {
+      collectCards(PLAYER_1_INDEX);
+      log.info("Player 1 wins the round!");
+    } else if (cardsEnumIndex[PLAYER_1_INDEX] < cardsEnumIndex[PLAYER_2_INDEX]) {
+      collectCards(PLAYER_2_INDEX);
+      log.info("Player 2 wins the round!");
+    } else {
+      returnCardsToPlayers();
+      log.info("No one wins. It's a draw!");
     }
   }
 
-  //Method for returning the cards to the players in the case of draw round
-  private static void returnCardsToPlayers() {
-    for (int i = 0; i < cardsForIteration.length; i++) {
-      playersCards[i][playerCardHeads[i]] = cardsForIteration[i];
-      playerCardHeads[i] = incrementIndex(playerCardHeads[i]);
-    }
-  }
-
-  //Counting the player's cards. As blank spaces in the array is marked as -1, it count the places which are != -1
   private static int countPlayerCards(int playerIndex) {
     int cardAmount = 0;
     for (int i = 0; i < CardUtils.CARDS_TOTAL_COUNT; i++) {

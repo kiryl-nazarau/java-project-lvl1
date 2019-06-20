@@ -79,26 +79,22 @@ class BlackJack {
     return 0;
   }
 
-  //Method to take the bet amount from the players account each round
   private static void placeBets() {
     for (int i = 0; i < NUMBER_OF_PLAYERS; i++) {
       playersMoney[i] = playersMoney[i] - BET;
     }
   }
 
-  //Method to add win to player's account. BET * 2 - because previously we deduct BET from the account
   private static void addRoundWinToPlayer(int playerIndex) {
     playersMoney[playerIndex] = playersMoney[playerIndex] + (BET * 2);
   }
 
-  //Method to return the BET to accounts in a case of a draw
   private static void returnBets() {
     for (int i = 0; i < NUMBER_OF_PLAYERS; i++) {
       playersMoney[i] = playersMoney[i] + BET;
     }
   }
 
-  //Winner determiner, add the win to the winner ammount and print the result. In draw case returns bets to players
   private static void determineWinner(int playerPoints, int cruPoints) {
     if (playerPoints > cruPoints) {
       addRoundWinToPlayer(PLAYER_1_INDEX);
