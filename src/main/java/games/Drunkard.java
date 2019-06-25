@@ -86,28 +86,35 @@ class Drunkard {
   }
 
   private static void determineRoundWinner() {
-    int[] cardsEnumIndex = new int[NUMBER_OF_PLAYERS];
+    int[] parEnumIndex = new int[NUMBER_OF_PLAYERS];
 
     for (int i = 0; i < cardsForIteration.length; i++) {
-      cardsEnumIndex[i] = CardUtils.Par.valueOf(CardUtils.getPar(cardsForIteration[i]).toString()).ordinal();
+      parEnumIndex[i] = CardUtils.Par.valueOf(CardUtils.getPar(cardsForIteration[i]).toString()).ordinal();
     }
 
-    if (cardsEnumIndex[PLAYER_1_INDEX] == 0 && cardsEnumIndex[PLAYER_2_INDEX] == 8) {
+      if (isPlayerWin(parEnumIndex, PLAYER_1_INDEX)) {
       collectCards(PLAYER_1_INDEX);
       log.info("Player 1 wins the round!");
-    } else if (cardsEnumIndex[PLAYER_1_INDEX] == 8 && cardsEnumIndex[PLAYER_2_INDEX] == 0) {
-      collectCards(PLAYER_2_INDEX);
-      log.info("Player 2 wins the round!");
-    } else if (cardsEnumIndex[PLAYER_1_INDEX] > cardsEnumIndex[PLAYER_2_INDEX]) {
-      collectCards(PLAYER_1_INDEX);
-      log.info("Player 1 wins the round!");
-    } else if (cardsEnumIndex[PLAYER_1_INDEX] < cardsEnumIndex[PLAYER_2_INDEX]) {
+    } else if (isPlayerWin(parEnumIndex, PLAYER_2_INDEX)) {
       collectCards(PLAYER_2_INDEX);
       log.info("Player 2 wins the round!");
     } else {
       returnCardsToPlayers();
       log.info("No one wins. It's a draw!");
     }
+  }
+
+  private static boolean isPlayerWin(int[] parEnumIndex, int playerIndex) {
+    int oppositePlayerIndex;
+    if (playerIndex == PLAYER_1_INDEX) {
+      oppositePlayerIndex = PLAYER_2_INDEX;
+    } else oppositePlayerIndex = PLAYER_1_INDEX;
+
+    if (parEnumIndex[oppositePlayerIndex] == 0 && parEnumIndex[playerIndex] == 8) {
+      return false;
+    }
+
+    return parEnumIndex[playerIndex] == 0 && parEnumIndex[oppositePlayerIndex] == 8 || parEnumIndex[playerIndex] > parEnumIndex[oppositePlayerIndex];
   }
 
   private static int countPlayerCards(int playerIndex) {
