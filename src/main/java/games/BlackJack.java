@@ -23,23 +23,16 @@ class BlackJack {
     while (playersMoney[PLAYER_1_INDEX] != 0 && playersMoney[CRU_INDEX] != 0) {
       initRound();
       placeBets();
-      addCard2Player(PLAYER_1_INDEX);
-      addCard2Player(PLAYER_1_INDEX);
 
-      while (sum(PLAYER_1_INDEX) < 20) {
-        boolean playerChoice;
-        playerChoice = Choice.confirm("Do you want to take one more card?\n");
-        if (playerChoice) {
+      do {
+        if (playersCursors[PLAYER_1_INDEX] < 2 || Choice.confirm("Do you want to take one more card?\n")) {
           addCard2Player(PLAYER_1_INDEX);
         } else break;
-      }
+      } while (getFinalSum(PLAYER_1_INDEX) < 20 && getFinalSum(PLAYER_1_INDEX) != 0);
 
-      addCard2Player(CRU_INDEX);
-      addCard2Player(CRU_INDEX);
-
-      while (sum(CRU_INDEX) <= 17) {
+      do {
         addCard2Player(CRU_INDEX);
-      }
+      } while (getFinalSum(CRU_INDEX) <= 17 && getFinalSum(CRU_INDEX) != 0);
 
       int playerPoints = getFinalSum(PLAYER_1_INDEX);
       int cruPoints = getFinalSum(CRU_INDEX);
@@ -63,16 +56,11 @@ class BlackJack {
     playersCursors[playerIndex]++;
   }
 
-  private static int sum(int playerIndex) {
-    int sum = 0;
-    for (int i = 0; i < playersCursors[playerIndex]; i++) {
-      sum = sum + value(playersCards[playerIndex][i]);
-    }
-    return sum;
-  }
-
   private static int getFinalSum(int playerIndex) {
-    int finalSum = sum(playerIndex);
+    int finalSum = 0;
+    for (int i = 0; i < playersCursors[playerIndex]; i++) {
+      finalSum = finalSum + value(playersCards[playerIndex][i]);
+    }
     if (finalSum <= MAX_VALUE) {
       return finalSum;
     }
