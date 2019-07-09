@@ -25,14 +25,13 @@ class BlackJack {
       placeBets();
 
       do {
-        if (playersCursors[PLAYER_1_INDEX] < 2 || Choice.confirm("Do you want to take one more card?\n")) {
-          addCard2Player(PLAYER_1_INDEX);
-        } else break;
-      } while (getFinalSum(PLAYER_1_INDEX) < 20 && getFinalSum(PLAYER_1_INDEX) != 0);
+        addCard2Player(PLAYER_1_INDEX);
+      } while (isPlayerSumBetween(PLAYER_1_INDEX, 0, 11) ||
+              isPlayerSumBetween(PLAYER_1_INDEX, 10, 20) && Choice.confirm("Do you want to take one more card?\n"));
 
       do {
         addCard2Player(CRU_INDEX);
-      } while (getFinalSum(CRU_INDEX) <= 17 && getFinalSum(CRU_INDEX) != 0);
+      } while (isPlayerSumBetween(CRU_INDEX, 0, 17));
 
       int playerPoints = getFinalSum(PLAYER_1_INDEX);
       int cruPoints = getFinalSum(CRU_INDEX);
@@ -65,6 +64,11 @@ class BlackJack {
       return finalSum;
     }
     return 0;
+  }
+
+  private static boolean isPlayerSumBetween(int playerIndex, int min, int max) {
+    int playerSum = getFinalSum(playerIndex);
+    return min < playerSum && playerSum < max;
   }
 
   private static void placeBets() {
